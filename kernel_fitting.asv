@@ -22,7 +22,6 @@ kernel = @linear_kernel;
 lambda = 10;
 prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
         Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,[]); 
-disp(['Percent RMS Error (on Test Set with Linear Fit) = ' num2str(prmse) '%']);
 
 %% Fitting Polynomial Function
 %% Finding Lambda
@@ -48,8 +47,6 @@ lambda = 10^9;
 order = 4;
 prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
         Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,order);
-disp(['Percent RMS Error (on Test Set with Polynomial Kernel) = ' num2str(prmse) '%']);
-
 
 %% Fitting Sobolev Kernel - Max(0,hyperplane) Kernel
 
@@ -74,10 +71,10 @@ load("test_data.mat");
 load("cross_validation_data.mat");
 kernel = @gaussian_kernel;
 lambda = 10^-3;
-sigma = 2;
+order = 2;
 prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
-        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,sigma);
-disp(['Percent RMS Error (on Test Set with Gaussian Kernel) = ' num2str(prmse) '%']);
+        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,order);
+
 
 %% Fitting Laplace Kernel
 %% Finding Lambda
@@ -99,11 +96,10 @@ fig_handle2 = find_hyperparam(X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
 load("test_data.mat");
 load("cross_validation_data.mat");
 kernel = @laplace_kernel;
-lambda = 10^-1;
-sigma = 10;
+lambda = 10^-3;
+order = 4;
 prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
-        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,sigma);
-disp(['Percent RMS Error (on Test Set with Laplace Kernel) = ' num2str(prmse) '%']);
+        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,order);
 
 %% Functions
 function k_xi_xj = linear_kernel(xi,xj,hyperparam)
