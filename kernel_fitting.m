@@ -7,7 +7,7 @@
 close all;
 clear;
 clc;
-
+% List of kernels to try:http://crsouza.com/2010/03/17/kernel-functions-for-machine-learning-applications/#laplacian
 %% Fitting Linear Function
 %% Finding Lambda
 load("cross_validation_data.mat");
@@ -49,9 +49,6 @@ order = 4;
 prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
         Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,order);
 disp(['Percent RMS Error (on Test Set with Polynomial Kernel) = ' num2str(prmse) '%']);
-
-
-%% Fitting Sobolev Kernel - Max(0,hyperplane) Kernel
 
 %% Fitting Gassian Kernel
 %% Finding Lambda
@@ -105,6 +102,37 @@ prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_vali
         Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,sigma);
 disp(['Percent RMS Error (on Test Set with Laplace Kernel) = ' num2str(prmse) '%']);
 
+%% Fitting Histogram Intersection Kernel
+%% Finding Lambda
+load("cross_validation_data.mat");
+kernel = @histogram_intersection_kernel;
+lambdas = logspace(-2,5,8);
+fig_handle1 = find_lambda(X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
+            Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambdas,[]);
+%% Running on Test Set
+load("test_data.mat");
+load("cross_validation_data.mat");
+kernel = @histogram_intersection_kernel;
+lambda = 1;
+prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
+        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,[]); 
+disp(['Percent RMS Error (on Test Set with Histogram Intersection Kernel) = ' num2str(prmse) '%']);
+%% Fitting Wavelet Kernel
+%% Finding Lambda
+load("cross_validation_data.mat");
+kernel = @wavelet_kernel;
+lambdas = logspace(-2,5,8);
+fig_handle1 = find_lambda(X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
+            Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambdas,[]);
+%% Running on Test Set
+load("test_data.mat");
+load("cross_validation_data.mat");
+kernel = @wavelet_kernel;
+lambda = 1;
+prmse = test_evaluation(X_test,Y_test,X_valid1,X_valid2,X_valid3,X_valid4,X_valid5,...
+        Y_valid1,Y_valid2,Y_valid3,Y_valid4,Y_valid5,kernel,lambda,[]); 
+disp(['Percent RMS Error (on Test Set with Wavelet Kernel) = ' num2str(prmse) '%']);
+
 %% Functions
 function k_xi_xj = linear_kernel(xi,xj,hyperparam)
     k_xi_xj = reshape(xi,1,[])*reshape(xj,[],1);
@@ -114,9 +142,6 @@ function k_xi_xj = polynomial_kernel(xi,xj,order)
     k_xi_xj = (1 + reshape(xi,1,[])*reshape(xj,[],1))^order;
 end
 
-% function k_xi_xj = Sobolev_kernel(xi,xj)
-%     k_xi_xj = (1 + reshape(xi,1,[])*reshape(xj,[],1))^4;
-% end
 
 function k_xi_xj = gaussian_kernel(xi,xj,sigma)
     k_xi_xj = exp(-(norm(reshape(xi,1,[]) - reshape(xj,1,[]),2)^2 )/(2*sigma^2));
@@ -124,6 +149,18 @@ end
 
 function k_xi_xj = laplace_kernel(xi,xj,sigma)
     k_xi_xj = exp(-norm(reshape(xi,1,[]) - reshape(xj,1,[]),2)/sigma);
+end
+
+function k_xi_xj = histogram_intersection_kernel(xi,xj,hyperparam)
+    k_xi_xj = sum(min(reshape(xi,[],1),reshape(xj,[],1)));
+end
+
+function k_xi_xj = wavelet_kernel(xi,xj,hyperparam)
+     k_xi_xj = prod(wavelet(reshape(xi,1,[])).*wavelet(reshape(xi,1,[])));
+end
+
+function y = wavelet(x)
+    y = cos(1.75*x).*exp(-(x.^2)/2);
 end
 
 %rows of X are samples
