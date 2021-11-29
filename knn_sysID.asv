@@ -22,21 +22,19 @@ end
 % Identify best k value
 [~, best_k1] = min(prsme_values_1);
 %% 2. No feature extraction - uniform average: Testing
-close all;
 load('test_data.mat');
 [prsme_value_2, predicted_values] = test_evaluation(X_test,Y_test,X_valid1, X_valid2, X_valid3, X_valid4, X_valid5, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k1, use_uniform);
 
 % Plot the performance
-plot_picks = [192, 55, 4];
+plot_picks = [1, 100, 175];
 [coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
+[wn2, zeta2] = predicted_values(plot_picks(2),:);
+[wn3, zeta3] = predicted_values(plot_picks(3),:);
 
 title_string = "No Feature Extraction, Uniform Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
+plot_performance(wn1,zeta1, train_sample(plot_picks(1),:), title_string); 
+
 %% 3. No feature extraction - weighted average: Training
 use_uniform = 0; % if 1, use uniform average for knn regression, if 0 use weighted average
 k_max = 25; % largest number of surrounding neighbors to compute average with
@@ -51,20 +49,8 @@ end
 % Identify best k value
 [~, best_k2] = min(prsme_values_3);
 %% 4. No feature extraction - weighted average: Testing
-close all;
-[prsme_value_4, predicted_values] = test_evaluation(X_test,Y_test,X_valid1, X_valid2, X_valid3, X_valid4, X_valid5, ...
+prsme_value_4 = test_evaluation(X_test,Y_test,X_valid1, X_valid2, X_valid3, X_valid4, X_valid5, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k2, use_uniform);
-
-% Plot the performance
-plot_picks = [192, 55, 4];
-[coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
-
-title_string = "No Feature Extraction, Weighted Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
 %% 5. FFT - uniform average: Training
 clear all;
 load('cross_validation_data.mat');
@@ -89,21 +75,9 @@ end
 % Identify best k value
 [~, best_k1] = min(prsme_values_1);
 %% 6. FFT - uniform average: Testing
-close all;
 X_test_fft = abs(fft(X_test,[],2));
-[prsme_value_2,  predicted_values] = test_evaluation(X_test_fft,Y_test,X_valid1_fft, X_valid2_fft, X_valid3_fft, X_valid4_fft, X_valid5_fft, ...
+prsme_value_2 = test_evaluation(X_test_fft,Y_test,X_valid1_fft, X_valid2_fft, X_valid3_fft, X_valid4_fft, X_valid5_fft, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k1, use_uniform); 
-
-% Plot the performance
-plot_picks = [192, 55, 4];
-[coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
-
-title_string = "FFT, Uniform Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
 %% 7. FFT - weighted average: Training
 use_uniform = 0; % if 1, use uniform average for knn regression, if 0 use weighted average
 k_max = 25; % largest number of surrounding neighbors to compute average with
@@ -117,20 +91,8 @@ end
 
 [~, best_k2] = min(prsme_values_3);
 %% 8. FFT - weighted average: Testing
-close all;
-[prsme_value_4, predicted_values] = test_evaluation(X_test_fft,Y_test,X_valid1_fft, X_valid2_fft, X_valid3_fft, X_valid4_fft, X_valid5_fft, ...
+prsme_value_4 = test_evaluation(X_test_fft,Y_test,X_valid1_fft, X_valid2_fft, X_valid3_fft, X_valid4_fft, X_valid5_fft, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k2, use_uniform); 
-
-% Plot the performance
-plot_picks = [192, 55, 4];
-[coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
-
-title_string = "FFT, Weighted Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
 %% 9. Clipping - uniform average: Training
 clear all;
 load('cross_validation_data.mat');
@@ -157,21 +119,9 @@ end
 % Identify best k value
 [~, best_k1] = min(prsme_values_1);
 %% 10. Clipping - uniform average: Testing
-close all;
 X_test_clip = X_test(:,1:clip_length);
-[prsme_value_2, predicted_values] = test_evaluation(X_test_clip,Y_test,X_valid1_clip, X_valid2_clip, X_valid3_clip, X_valid4_clip, X_valid5_clip, ...
+prsme_value_2 = test_evaluation(X_test_clip,Y_test,X_valid1_clip, X_valid2_clip, X_valid3_clip, X_valid4_clip, X_valid5_clip, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k1, use_uniform); 
-
-% Plot the performance
-plot_picks = [192, 55, 4];
-[coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
-
-title_string = "Clipping, Uniform Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
 %% 11. Clipping - weighted average: Training
 use_uniform = 0; % if 1, use uniform average for knn regression, if 0 use weighted average
 prsme_values_3 = zeros(length(k_values),1);
@@ -184,21 +134,9 @@ end
 % Identify best k value
 [~, best_k2] = min(prsme_values_3);
 %% 12. Clipping - weighted average: Testing
-close all;
 X_test_clip = X_test(:,1:clip_length);
-[prsme_value_3, predicted_values] = test_evaluation(X_test_clip,Y_test,X_valid1_clip, X_valid2_clip, X_valid3_clip, X_valid4_clip, X_valid5_clip, ...
+prsme_value_3 = test_evaluation(X_test_clip,Y_test,X_valid1_clip, X_valid2_clip, X_valid3_clip, X_valid4_clip, X_valid5_clip, ...
     Y_valid1, Y_valid2, Y_valid3, Y_valid4, Y_valid5, best_k2, use_uniform); 
-
-% Plot the performance
-plot_picks = [192, 55, 4];
-[coeffs1] = predicted_values(plot_picks(1),:);
-[coeffs2] = predicted_values(plot_picks(2),:);
-[coeffs3] = predicted_values(plot_picks(3),:);
-
-title_string = "Clipping, Weighted Average";
-plot_performance(coeffs1(1),coeffs1(2), X_test(plot_picks(1),:), title_string); 
-plot_performance(coeffs2(1),coeffs2(2), X_test(plot_picks(2),:), title_string); 
-plot_performance(coeffs3(1),coeffs3(2), X_test(plot_picks(3),:), title_string); 
 %% Functions
 function prmse = calc_percent_rmse(x_actual,x_corrupted)
     N = length(x_actual);
@@ -244,13 +182,13 @@ function [prmse_knn, Y_test_pred] = test_evaluation(X_test,Y_test,X1,X2,X3,X4,X5
     prmse_knn = calc_percent_rmse(Y_test,Y_test_pred);
 end
 
-function plot_performance(zeta, wn,train_sample, title_string)
+function plot_performance(wn,zeta, train_sample, title_string)
     % Generate predicted signal
     s = tf('s');
     fs = 100;
     N = 500; %Length of Signal
     t = 0:(1/fs):(N-1)*(1/fs);
-    sys = (wn^2)/(s^2 + 2*zeta*wn*s + wn^2);
+    sys = (wn(j)^2)/(s^2 + 2*zeta(i)*wn(j)*s + wn(j)^2);
     
     % Plot it against actual signal
     figure;
@@ -261,7 +199,7 @@ function plot_performance(zeta, wn,train_sample, title_string)
     xlabel('Time (seconds)', 'Interpreter', 'latex', 'Fontsize', 14);
     ylabel('Amplitude', 'Interpreter', 'latex', 'Fontsize', 14);
     title(title_string, 'Interpreter', 'latex', 'Fontsize', 16);
-    legend('Predicted Signal','Actual Signal','Interpreter', 'latex','Fontsize', 12);
+    legend('Predicted Signal','Actual Signal',Interpreter', 'latex','Fontsize', 12);
     hold off;
     
 end
