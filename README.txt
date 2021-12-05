@@ -1,3 +1,11 @@
+## Overview
+In this project we performed second-order system parameter identification using three machine learning methods: K-Nearest Neighbors, Kernel Regression, and Neural Networks.
+
+## Repo Structure
+We generated our training, validation, and test data using ```data_generator.m```, storing training and validation data in ```cross_validation_fold1.csv, ... , cross_validation_fold5.csv```, while storing our test data in ```test_data.csv```.
+
+We perform K-Nearest Neighbors estimation in ```knn_for_params.m``` and ```knn_sysID.m```; Kernel Regression in ```kernel_fitting.m``` and ```kernel_fitting.pdf```; and Neural Network prediction in ```MLP.ipynb``` and ```MLP.pdf```.
+
 - The data is available as .mat or .csv (the data is the same between the .csv files or the .mat files are used)
 - It has been shuffled and pre-spliced into 5 seperate cross validation
 	- These 5 slices are in seperate files for the .csv format and are in
